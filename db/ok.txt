@@ -1,0 +1,40 @@
+-- Create table for products
+CREATE TABLE IF NOT EXISTS products (
+    product_id INTEGER PRIMARY KEY AUTOINCREMENT, -- Unique ID for each product
+    name TEXT NOT NULL,                           -- Name of the product
+    description TEXT,                             -- Description of the product
+    price REAL NOT NULL,                          -- Price of the product
+    stock INTEGER DEFAULT 0                       -- Available stock of the product
+);
+
+-- Create table for users
+CREATE TABLE IF NOT EXISTS users (
+    user_id INTEGER PRIMARY KEY AUTOINCREMENT,    -- Unique ID for each user
+    name TEXT NOT NULL,                           -- Name of the user
+    email TEXT NOT NULL UNIQUE,                   -- Email (unique) of the user
+    password TEXT NOT NULL,                       -- Hashed password for the user
+    role TEXT DEFAULT 'customer'                  -- Role (e.g., 'customer', 'admin')
+);
+
+-- Create table for shopping cart
+CREATE TABLE IF NOT EXISTS shopping_cart (
+    cart_id INTEGER PRIMARY KEY AUTOINCREMENT,    -- Unique ID for the shopping cart
+    user_id INTEGER NOT NULL,                     -- ID of the user who owns the cart
+    product_id INTEGER NOT NULL,                  -- ID of the product in the cart
+    quantity INTEGER DEFAULT 1,                   -- Quantity of the product in the cart
+    added_at DATETIME DEFAULT CURRENT_TIMESTAMP,  -- Date and time the product was added to the cart
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
+);
+
+-- Create table for purchases
+CREATE TABLE IF NOT EXISTS purchases (
+    purchase_id INTEGER PRIMARY KEY AUTOINCREMENT, -- Unique ID for each purchase
+    user_id INTEGER NOT NULL,                      -- ID of the user who made the purchase
+    product_id INTEGER NOT NULL,                   -- ID of the purchased product
+    quantity INTEGER DEFAULT 1,                    -- Quantity of the purchased product
+    total_price REAL NOT NULL,                     -- Total price paid for the purchase
+    purchased_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Date and time of the purchase
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
+);
